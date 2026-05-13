@@ -14,6 +14,20 @@ echo  RUMI Kiosk Runtime
 echo  Started: %date% %time%
 echo  Log: %LOGFILE%
 echo ============================================================
+
+REM Rotate logs before starting watchdog (don't fail kiosk if rotation fails)
+echo.
+echo  Rotating logs...
+echo.
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0rotate_logs.ps1"
+echo.
+if !ERRORLEVEL! NEQ 0 (
+    echo [WARN] Log rotation exited with code !ERRORLEVEL!, continuing anyway
+) else (
+    echo [OK] Log rotation completed
+)
+echo.
+
 echo.
 echo  Watchdog is running. Press Ctrl+C to stop.
 echo.

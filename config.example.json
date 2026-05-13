@@ -10,5 +10,7 @@
   "max_crash_count": 5,
   "crash_window_minutes": 10,
   "relaunch_delay_seconds": 5,
-  "uptime_kuma_push_url": ""
+  "uptime_kuma_push_url": "",
+  "log_retention_days": 30,
+  "log_max_size_mb": 100
 }
