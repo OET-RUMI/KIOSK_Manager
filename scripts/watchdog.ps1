@@ -75,17 +75,56 @@ if ($config.off_hours_start -and $config.off_hours_duration_hours) {
     Log "Off-hours: $($config.off_hours_start) for $($config.off_hours_duration_hours)h"
 }
 
+# Off-hours display: track the child process so we can kill it when off-hours end.
+$offhoursDisplay = $null
+$offhoursScript = "C:\rumi-kiosk\scripts\offhours_display.ps1"
+
+function Start-OffHoursDisplay {
+    if ($script:offhoursDisplay -and -not $script:offhoursDisplay.HasExited) {
+        return
+    }
+    if (-not (Test-Path $offhoursScript)) {
+        return
+    }
+    try {
+        $script:offhoursDisplay = Start-Process -FilePath "powershell.exe" `
+            -ArgumentList "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $offhoursScript `
+            -PassThru -WindowStyle Hidden
+        Log "Off-hours display started, PID: $($script:offhoursDisplay.Id)"
+    } catch {
+        Log "Failed to start off-hours display: $_"
+    }
+}
+
+function Stop-OffHoursDisplay {
+    if (-not $script:offhoursDisplay) { return }
+    if ($script:offhoursDisplay.HasExited) {
+        $script:offhoursDisplay = $null
+        return
+    }
+    try {
+        Stop-Process -Id $script:offhoursDisplay.Id -Force -ErrorAction Stop
+        Log "Off-hours display stopped"
+    } catch {
+        Log "Failed to stop off-hours display: $_"
+    }
+    $script:offhoursDisplay = $null
+}
+
 # Track recent crash times as a rolling window
 $crashTimes = New-Object System.Collections.ArrayList
 
 while ($true) {
     # off-hours gate: idle here until visitor hours, sending heartbeats so Kuma sees us
     if (Test-OffHours) {
+        Start-OffHoursDisplay
         Log "In off-hours window, idling (will recheck in 60s)"
         Send-Heartbeat -status "up" -msg "off_hours"
         Start-Sleep -Seconds 60
         continue
     }
+
+    Stop-OffHoursDisplay
 
     Log "Launching UE"
     $startTime = Get-Date

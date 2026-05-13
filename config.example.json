@@ -6,6 +6,8 @@
   "build_path": "C:\\rumi-kiosk\\build",
   "runtime_path": "C:\\rumi-kiosk\\runtime",
   "log_path": "C:\\rumi-kiosk\\logs",
+  "offhours_path": "C:\\rumi-kiosk\\offhours",
+  "offhours_slide_seconds": 10,
   "ue_executable": "RUMI_HercSim.exe",
   "max_crash_count": 5,
   "crash_window_minutes": 10,
