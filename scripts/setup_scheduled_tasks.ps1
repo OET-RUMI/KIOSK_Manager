@@ -51,10 +51,9 @@ $action = New-ScheduledTaskAction `
 
 $trigger = New-ScheduledTaskTrigger -Daily -At $rebootTime
 
-# Run as SYSTEM so it works without a user logged in, and has rights to reboot.
 $principal = New-ScheduledTaskPrincipal `
-    -UserId "SYSTEM" `
-    -LogonType ServiceAccount `
+    -UserId $env:USERNAME `
+    -LogonType Interactive `
     -RunLevel Highest
 
 # StartWhenAvailable: if the machine was off at trigger time, run as soon as it's up.
@@ -80,4 +79,8 @@ if (-not $verify) {
 }
 
 Log "Task registered. Next run: $((Get-ScheduledTaskInfo -TaskName $taskName).NextRunTime)"
+
+# For testing to immediately run the task
+# Start-ScheduledTask -TaskName $taskName
+
 exit 0
