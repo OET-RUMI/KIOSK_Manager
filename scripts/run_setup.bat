@@ -25,7 +25,7 @@ echo ============================================================
 echo.
 
 REM list scripts that need to run in order
-set SCRIPTS=setup_p4.ps1 setup_mesh.ps1 stage_build.ps1 setup_startup.ps1 setup_scheduled_tasks.ps1
+set SCRIPTS=setup_p4.ps1 setup_mesh.ps1 stage_build.ps1 setup_startup.ps1 setup_scheduled_tasks.ps1 setup_lockdown.ps1
 
 set FAILED=0
 
