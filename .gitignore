@@ -1,0 +1,29 @@
+# ---- Kiosk runtime state (never commit) ----
+# These get populated on each kiosk; nothing here belongs in source control.
+logs/
+build/
+runtime/
+*.log
+
+# ---- Mesh Agent Binaries ----
+# Delivered per kioks; not part of source control.
+bin/meshagent64.exe
+
+# ---- Local config ----
+# config.json is per-kiosk (kiosk_name, push URL, etc).
+# config.example.json is the template for it
+config.json
+
+# ---- Perforce ----
+# In case anything P4 ever lands in this repo by accident.
+.p4config
+.p4ignore
+p4tickets.txt
+p4trust.txt
+
+# ---- Editor / IDE ----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
