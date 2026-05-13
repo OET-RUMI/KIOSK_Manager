@@ -35,10 +35,11 @@ if (-not (Test-Path $autologon)) {
 }
 
 # Autologon.exe args: <username> <domain> <password>
-# Empty password is fine for accounts with no password.
 # /accepteula suppresses the first-run EULA dialog.
 Log "Configuring auto-login for user: $env:USERNAME"
-$proc = Start-Process -FilePath $autologon -ArgumentList "/accepteula", $env:USERNAME, $env:COMPUTERNAME, '""' -Wait -PassThru -NoNewWindow
+
+$argString = "/accepteula `"$env:USERNAME`" `"$env:COMPUTERNAME`" `"`""
+$proc = Start-Process -FilePath $autologon -ArgumentList $argString -Wait -PassThru -NoNewWindow
 if ($proc.ExitCode -ne 0) {
     Log "Autologon.exe exited with code $($proc.ExitCode)"
     exit 1
