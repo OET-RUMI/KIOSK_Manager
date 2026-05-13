@@ -94,10 +94,10 @@ while ($true) {
         $process = Start-Process -FilePath $exePath.FullName -PassThru
         Log "UE started, PID: $($process.Id)"
 
-        # loop while UE is running, sending heartbeat every 30s
+        # loop while UE is running, sending heartbeat every 5s
         while (-not $process.HasExited) {
             Send-Heartbeat -status "up" -msg "UE running, PID: $($process.Id)"
-            Start-Sleep -Seconds 30
+            Start-Sleep -Seconds 5
             $process.Refresh()
         }
 
