@@ -23,6 +23,7 @@ Persistent
 
 lockFile := "C:\rumi-kiosk\LOCK"
 logFile := "C:\rumi-kiosk\logs\lockdown.log"
+config   := "C:\rumi-kiosk\config.json"
 
 ; Make sure log dir exists (watchdog usually creates it, but be safe)
 try DirCreate("C:\rumi-kiosk\logs")
@@ -31,6 +32,19 @@ Log(msg) {
     global logFile
     line := FormatTime(, "yyyy-MM-ddTHH:mm:ss") . " [" . A_ComputerName . "] " . msg
     try FileAppend(line . "`n", logFile)
+}
+
+; Check enable_ahk_lock in config.json
+enabled := true
+try {
+    configText := FileRead(config)
+    if RegExMatch(configText, 'i)"enable_ahk_lock"\s*:\s*(true|false)', &m) {
+        enabled := (m[1] = "true")
+    }
+}
+if !enabled {
+    Log("enable_ahk_lock=false in config - exiting without applying lockdown")
+    ExitApp(0)
 }
 
 ; Create the LOCK sentinel if it's not there. Deleting this file is the

@@ -99,14 +99,22 @@ if (-not (Test-Path $shortcutPath)) {
     Log "FATAL: Shortcut was not created"
     exit 1
 }
+
+$enabled = $true
+if ($config.PSObject.Properties.Name -contains "enable_ahk_lock") {
+    $enabled = [bool]$config.enable_ahk_lock
+}
  
-# Launch now, skip if already running.
-$existing = Get-Process -Name "AutoHotkey64" -ErrorAction SilentlyContinue
-if ($existing) {
-    Log "AutoHotkey64 already running (PID: $($existing.Id -join ',')) - skipping launch"
+if (-not $enabled) {
+    Log "enable_ahk_lock=false in config - shortcut registered, skipping launch"
 } else {
-    Log "Launching lockdown for current session"
-    Start-Process -FilePath $ahkExe -ArgumentList "`"$ahkScript`""
+    $existing = Get-Process -Name "AutoHotkey64" -ErrorAction SilentlyContinue
+    if ($existing) {
+        Log "AutoHotkey64 already running (PID: $($existing.Id -join ',')) - skipping launch"
+    } else {
+        Log "Launching lockdown for current session"
+        Start-Process -FilePath $ahkExe -ArgumentList "`"$ahkScript`""
+    }
 }
  
 Log "Lockdown configured."
