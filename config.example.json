@@ -12,5 +12,8 @@
   "relaunch_delay_seconds": 5,
   "uptime_kuma_push_url": "",
   "log_retention_days": 30,
-  "log_max_size_mb": 100
+  "log_max_size_mb": 100,
+  "nightly_reboot_time": "02:00",
+  "off_hours_start": "02:00",
+  "off_hours_duration_hours": 4
 }
