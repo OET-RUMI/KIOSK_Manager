@@ -77,10 +77,18 @@ if ($images.Count -gt 1) {
     $timer.Start()
 }
 
+$sentinelPath = Join-Path $config.log_path "offhours_dismissed.flag"
+
 # Esc closes the window.
 # Esc will be disabled on kiosks from AHK, useful when testing
 $window.Add_KeyDown({
     if ($_.Key -eq [System.Windows.Input.Key]::Escape) {
+        try {
+            Set-Content -Path $sentinelPath -Value (Get-Date -Format o) -Force
+            Log "Esc pressed, dropped sentinel at $sentinelPath"
+        } catch {
+            Log "Failed to write sentinel: $_"
+        }
         $window.Close()
     }
 })

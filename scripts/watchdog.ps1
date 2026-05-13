@@ -78,10 +78,14 @@ if ($config.off_hours_start -and $config.off_hours_duration_hours) {
 # Off-hours display: track the child process so we can kill it when off-hours end.
 $offhoursDisplay = $null
 $offhoursScript = "C:\rumi-kiosk\scripts\offhours_display.ps1"
+$offhoursSentinel = Join-Path $config.log_path "offhours_dismissed.flag"
 
 function Start-OffHoursDisplay {
     if ($script:offhoursDisplay -and -not $script:offhoursDisplay.HasExited) {
         return
+    }
+    if (Test-Path $offhoursSentinel) {
+        return  # was already dismissed tonight, don't come back unless sentinel file is deleted
     }
     if (-not (Test-Path $offhoursScript)) {
         return
@@ -97,6 +101,10 @@ function Start-OffHoursDisplay {
 }
 
 function Stop-OffHoursDisplay {
+    if (Test-Path $offhoursSentinel) {
+        Remove-Item $offhoursSentinel -Force -ErrorAction SilentlyContinue
+        Log "Cleared off-hours dismissal sentinel"
+    }
     if (-not $script:offhoursDisplay) { return }
     if ($script:offhoursDisplay.HasExited) {
         $script:offhoursDisplay = $null
